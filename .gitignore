@@ -39,3 +39,12 @@
 
 # debug information files
 *.dwo
+
+.idea
+
+obj
+
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.slnx
