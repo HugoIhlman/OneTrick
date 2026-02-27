@@ -20,11 +20,11 @@ cWindow::cWindow()
 {
     auto registerWindowClass = []()
     {
-        WNDCLASSEX wc{};
-        wc.cbSize = sizeof(WNDCLASSEX);
-        wc.lpszClassName = L"DX3DWindow";
-        wc.lpfnWndProc = &WindowProcedure;
-        return RegisterClassEx(&wc);
+        WNDCLASSEX wclass{};
+        wclass.cbSize = sizeof(WNDCLASSEX);
+        wclass.lpszClassName = L"DX3DWindow";
+        wclass.lpfnWndProc = &WindowProcedure;
+        return RegisterClassEx(&wclass);
         
     };
     auto windowClassId = registerWindowClass();
@@ -32,12 +32,12 @@ cWindow::cWindow()
     if (!windowClassId)
         throw std::runtime_error("RegisterClassEX failed.");
 
-    RECT rc = {0,0,1280,720};
-    AdjustWindowRect(&rc, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, false);
+    RECT rect = {0,0,1280,720};
+    AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, false);
 
     m_handle = CreateWindowEx(NULL, MAKEINTATOM(windowClassId), L"OneTrick",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT,
-        rc.right - rc.left, rc.bottom - rc.top, NULL,NULL,NULL,NULL);
+        rect.right - rect.left, rect.bottom - rect.top, NULL,NULL,NULL,NULL);
 
     if (!m_handle)
         throw std::runtime_error("CreateWindowEx failed.");

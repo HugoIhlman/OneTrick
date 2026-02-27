@@ -4,12 +4,12 @@
 
 cGame::cGame()
 {
-    m_display = new cWindow();
+    m_renderer = std::make_unique<cRenderer>();
+    m_display = std::make_unique<cWindow>();
 }
 
 cGame::~cGame()
 {
-    delete m_display;
 }
 
 void cGame::run()
