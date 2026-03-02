@@ -4,12 +4,17 @@
 
 cGame::cGame()
 {
+    m_logger = std::make_unique<cLogger>(cLogger::LogLevel::Info);
     m_renderer = std::make_unique<cRenderer>();
     m_display = std::make_unique<cWindow>();
+
+    m_logger->log(cLogger::LogLevel::Info, "Game initialized");
 }
 
 cGame::~cGame()
 {
+    m_logger->log(cLogger::LogLevel::Info, "Game deinitializing");
+    
 }
 
 void cGame::run()

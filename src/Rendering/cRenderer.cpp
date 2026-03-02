@@ -28,3 +28,8 @@ cRenderer::~cRenderer()
 void cRenderer::render()
 {
 }
+
+resource cRenderer::getResource()
+{
+    return {*m_d3dDevice, *m_dxgiFactory};
+}
