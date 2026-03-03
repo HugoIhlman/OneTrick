@@ -1,6 +1,7 @@
 ﻿#include "cWindow.h"
 #include <stdexcept>
 #include <Windows.h>
+#include "cRenderer.h"
 
 static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -9,14 +10,16 @@ static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPAR
     case WM_CLOSE:
         {
             PostQuitMessage(0);
-            break;
+            return 0;
         }
     default:
-        return DefWindowProc(hwnd,msg,wparam,lparam);
+        {
+            return DefWindowProc(hwnd,msg,wparam,lparam);
+        }
     }
 }
 
-cWindow::cWindow()
+cWindow::cWindow(cRenderer& _renderer)
 {
     auto registerWindowClass = []()
     {
@@ -38,14 +41,18 @@ cWindow::cWindow()
     m_handle = CreateWindowEx(NULL, MAKEINTATOM(windowClassId), L"OneTrick",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT,
         rect.right - rect.left, rect.bottom - rect.top, NULL,NULL,NULL,NULL);
+    
 
     if (!m_handle)
         throw std::runtime_error("CreateWindowEx failed.");
 
     ShowWindow(static_cast<HWND>(m_handle), SW_SHOW);
+    _renderer.createSwapChain({m_handle});
 }
 
 cWindow::~cWindow()
 {
     DestroyWindow(static_cast<HWND>(m_handle));
 }
+
+

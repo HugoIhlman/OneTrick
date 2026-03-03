@@ -1,6 +1,9 @@
 #include "cRenderer.h"
 
+#include <DirectXMath.h>
 #include <stdexcept>
+
+#include "Core.h"
 
 
 cRenderer::cRenderer()
@@ -18,18 +21,27 @@ cRenderer::cRenderer()
     {
         throw std::runtime_error("D3D11CreateDevice failed.");
     }
+    m_d3dDevice.As(&m_dxgiDevice);
+
+    m_dxgiDevice->GetAdapter(&m_dxgiAdapter);
+
+    m_dxgiAdapter->GetParent(__uuidof(IDXGIFactory), &m_dxgiFactory);
+    
 }
 
 cRenderer::~cRenderer()
 {
-    
+    m_swap_chain = nullptr;
 }
 
 void cRenderer::render()
 {
+    m_d3dDeviceContext->ClearRenderTargetView(m_swap_chain->backBuffer, color);
+    m_swap_chain->getSwapChain()->Present(1,0);
 }
 
-resource cRenderer::getResource()
+void cRenderer::createSwapChain(const Ot::swapchaindsc& desc)
 {
-    return {*m_d3dDevice, *m_dxgiFactory};
+    m_swap_chain = std::make_shared<cSwapChain>(desc,getRsc());
 }
+
