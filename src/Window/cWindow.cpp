@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <Windows.h>
 #include "cRenderer.h"
+#include "Core.h"
 
 static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -35,7 +36,7 @@ cWindow::cWindow(cRenderer& _renderer)
     if (!windowClassId)
         throw std::runtime_error("RegisterClassEX failed.");
 
-    RECT rect = {0,0,1280,720};
+    RECT rect = {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
     AdjustWindowRect(&rect, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, false);
 
     m_handle = CreateWindowEx(NULL, MAKEINTATOM(windowClassId), L"OneTrick",

@@ -37,10 +37,15 @@ cRenderer::~cRenderer()
 void cRenderer::render()
 {
     m_d3dDeviceContext->ClearRenderTargetView(m_swap_chain->backBuffer, color);
+    UINT stride = sizeof(OT::VERTEX);
+    UINT offset = 0;
+    m_d3dDeviceContext->IASetVertexBuffers(0,1,&m_swap_chain->vBuffer, &stride, &offset);
+    m_d3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_d3dDeviceContext->Draw(3,0);
     m_swap_chain->getSwapChain()->Present(1,0);
 }
 
-void cRenderer::createSwapChain(const Ot::swapchaindsc& desc)
+void cRenderer::createSwapChain(const OT::swapchaindsc& desc)
 {
     m_swap_chain = std::make_shared<cSwapChain>(desc,getRsc());
 }

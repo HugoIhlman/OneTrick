@@ -14,7 +14,7 @@ public:
     cWindow(cRenderer& _renderer);
     ~cWindow();
 
-    Ot::swapchaindsc getHandle() {return {m_handle};}
+    OT::swapchaindsc getHandle() {return {m_handle};}
    
     std::shared_ptr<cSwapChain> getSwapChain(){return m_swap_chain;}
 private:

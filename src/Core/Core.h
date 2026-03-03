@@ -1,8 +1,11 @@
 ﻿#pragma once
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include <dxgi.h>
 
-namespace Ot
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
+namespace OT
 {
     class cWindow;
     class cGame;
@@ -19,5 +22,11 @@ namespace Ot
         IDXGIFactory* factory;
         ID3D11Device* device;
         ID3D11DeviceContext* context;
+    };
+
+    struct VERTEX
+    {
+        FLOAT X, Y, Z;
+        DirectX::XMFLOAT4 COLOR;
     };
 }

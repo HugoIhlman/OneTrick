@@ -13,14 +13,16 @@ public:
     
 
     void render();
-    Ot::renderdsc getRsc(){return {m_dxgiFactory.Get(), m_d3dDevice.Get(), m_d3dDeviceContext.Get()};}
-    void createSwapChain(const Ot::swapchaindsc& desc);
+    OT::renderdsc getRsc(){return {m_dxgiFactory.Get(), m_d3dDevice.Get(), m_d3dDeviceContext.Get()};}
+    void createSwapChain(const OT::swapchaindsc& desc);
 private:
     ComPtr<ID3D11Device> m_d3dDevice = {};
     ComPtr<ID3D11DeviceContext> m_d3dDeviceContext = {};
     ComPtr<IDXGIDevice> m_dxgiDevice = {};
     ComPtr<IDXGIAdapter> m_dxgiAdapter = {};
     ComPtr<IDXGIFactory> m_dxgiFactory = {};
+
+    
 
     const FLOAT color[4] = {0.0f,0.2f,0.4f,1.0f};
 

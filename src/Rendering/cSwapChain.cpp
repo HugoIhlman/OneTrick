@@ -2,15 +2,16 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include "Core.h"
 
 
-cSwapChain::cSwapChain(Ot::swapchaindsc swp, Ot::renderdsc rnd): factory(rnd.factory), device(rnd.device), m_handle(swp.winHandle), context(rnd.context)
+cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.factory), device(rnd.device), m_handle(swp.winHandle), context(rnd.context)
 {
     DXGI_SWAP_CHAIN_DESC dxgi_swap_chain_desc;
 
     SecureZeroMemory(&dxgi_swap_chain_desc, sizeof(DXGI_SWAP_CHAIN_DESC));
-    dxgi_swap_chain_desc.BufferDesc.Width = 0;
-    dxgi_swap_chain_desc.BufferDesc.Height = 0;
+    dxgi_swap_chain_desc.BufferDesc.Width = SCREEN_WIDTH;
+    dxgi_swap_chain_desc.BufferDesc.Height = SCREEN_HEIGHT;
     dxgi_swap_chain_desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     dxgi_swap_chain_desc.BufferCount = 2;
     dxgi_swap_chain_desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -19,6 +20,7 @@ cSwapChain::cSwapChain(Ot::swapchaindsc swp, Ot::renderdsc rnd): factory(rnd.fac
     dxgi_swap_chain_desc.Windowed = TRUE;
     dxgi_swap_chain_desc.SampleDesc.Count = 4;
     dxgi_swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
+    dxgi_swap_chain_desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
     
     
@@ -42,8 +44,8 @@ cSwapChain::cSwapChain(Ot::swapchaindsc swp, Ot::renderdsc rnd): factory(rnd.fac
 
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
-    viewport.Height = 720;
-    viewport.Width = 1280;
+    viewport.Height = SCREEN_HEIGHT;
+    viewport.Width = SCREEN_WIDTH;
 
     context->RSSetViewports(1, &viewport);
 }
