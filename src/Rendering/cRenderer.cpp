@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <stdexcept>
 
+#include "cCamera.h"
 #include "Core.h"
 
 
@@ -26,7 +27,9 @@ cRenderer::cRenderer()
     m_dxgiDevice->GetAdapter(&m_dxgiAdapter);
 
     m_dxgiAdapter->GetParent(__uuidof(IDXGIFactory), &m_dxgiFactory);
-    
+
+    shader = new cShader(getRsc());
+    shader->createShader();
 }
 
 cRenderer::~cRenderer()
@@ -34,14 +37,13 @@ cRenderer::~cRenderer()
     m_swap_chain = nullptr;
 }
 
-void cRenderer::render()
+void cRenderer::render(cModel* _model, cCamera* _camera)
 {
     m_d3dDeviceContext->ClearRenderTargetView(m_swap_chain->backBuffer, color);
-    UINT stride = sizeof(OT::VERTEX);
-    UINT offset = 0;
-    m_d3dDeviceContext->IASetVertexBuffers(0,1,&m_swap_chain->vBuffer, &stride, &offset);
-    m_d3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_d3dDeviceContext->Draw(3,0);
+    _model->render(m_d3dDeviceContext.Get());
+    shader->setParams(m_d3dDeviceContext.Get(), m_swap_chain->getWorldMatrix(), _camera->getViewMatrix(), m_swap_chain->getProjectionMatrix(), _model->GetTexture());
+    m_d3dDeviceContext->PSSetSamplers(0,1,shader->getSamplerState());
+    m_d3dDeviceContext->DrawIndexed(3, 0,0);
     m_swap_chain->getSwapChain()->Present(1,0);
 }
 

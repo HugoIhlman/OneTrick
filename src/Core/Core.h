@@ -22,6 +22,7 @@ namespace OT
         IDXGIFactory* factory;
         ID3D11Device* device;
         ID3D11DeviceContext* context;
+        ID3D11Buffer* vbuffer;
     };
 
     struct VERTEX

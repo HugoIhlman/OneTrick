@@ -7,7 +7,7 @@ project "OneTrick"
     cppdialect "C++17"
     architecture "x64"
     targetdir "bin/%{cfg.buildcfg}"
-    includedirs{"src/Core", "src/Game", "src/Window", "src/Rendering"}
+    includedirs{"src/Core", "src/Game", "src/Window", "src/Rendering", "Asset/**"}
     files {"src/**.cpp", "src/**.h", "src/**.hlsl"}
     links { "d3d11", "dxgi", "d3dcompiler" }
     filter "configurations:Debug"
