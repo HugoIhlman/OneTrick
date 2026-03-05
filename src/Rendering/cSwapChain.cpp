@@ -21,7 +21,7 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     dxgi_swap_chain_desc.OutputWindow = static_cast<HWND>(m_handle);
     dxgi_swap_chain_desc.Windowed = TRUE;
     dxgi_swap_chain_desc.SampleDesc.Count = 1;
-    dxgi_swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
+    dxgi_swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     dxgi_swap_chain_desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
     
@@ -50,7 +50,7 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     depthBufferDesc.SampleDesc.Count = 1;
     depthBufferDesc.SampleDesc.Quality = 0;
-    depthBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
     depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
     depthBufferDesc.CPUAccessFlags = 0;
     depthBufferDesc.MiscFlags = 0;
@@ -79,6 +79,7 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
+    context->OMSetDepthStencilState(m_depthStencilState, 1);
 
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
     SecureZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -114,12 +115,14 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     viewport.TopLeftY = 0;
     viewport.Height = SCREEN_HEIGHT;
     viewport.Width = SCREEN_WIDTH;
+    viewport.MaxDepth = 1.0f;
+    viewport.MinDepth = 0.0f;
 
     context->RSSetViewports(1, &viewport);
     float fov = 3.141592654f / 4.0f;
     float aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 
-    projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, 0.3f, 1000.f);
+    projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 1000.f);
 
     worldMatrix = DirectX::XMMatrixIdentity();
 

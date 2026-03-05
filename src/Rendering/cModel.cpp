@@ -35,9 +35,9 @@ void cModel::render(ID3D11DeviceContext* _context)
 bool cModel::initializeBuffers(ID3D11Device* _device)
 {
     VERTEX vertices[3] = {
-        {DirectX::XMFLOAT3(-0.3f,-0.3f,0.0f), DirectX::XMFLOAT2(0.0f,1.0f)},
-        {DirectX::XMFLOAT3(0.0f,0.3f,0.0f), DirectX::XMFLOAT2(0.5f,0.0f)},
-        {DirectX::XMFLOAT3(0.3f,-0.3f,0.0f), DirectX::XMFLOAT2(1.0f,1.0f)}
+        {DirectX::XMFLOAT3(-1.0f,-1.0f,0.0f), DirectX::XMFLOAT2(0.0f,1.0f),DirectX::XMFLOAT3(0.0f,0.0f,-1.0f) },
+        {DirectX::XMFLOAT3(0.0f,1.0f,0.0f), DirectX::XMFLOAT2(0.5f,0.0f),DirectX::XMFLOAT3(0.0f,0.0f,-1.0f) },
+        {DirectX::XMFLOAT3(1.0f,-1.0f,0.0f), DirectX::XMFLOAT2(1.0f,1.0f),DirectX::XMFLOAT3(0.0f,0.0f,-1.0f) }
     };
     unsigned long indices[3];
     indices[0] = 0;
@@ -45,10 +45,10 @@ bool cModel::initializeBuffers(ID3D11Device* _device)
     indices[2] = 2;
     D3D11_BUFFER_DESC vbd;
     SecureZeroMemory(&vbd, sizeof(D3D11_BUFFER_DESC));
-    vbd.Usage = D3D11_USAGE_DYNAMIC;
+    vbd.Usage = D3D11_USAGE_DEFAULT;
     vbd.ByteWidth = sizeof(vertices) * 3;
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    vbd.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA vd;
     SecureZeroMemory(&vd, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -58,10 +58,10 @@ bool cModel::initializeBuffers(ID3D11Device* _device)
 
     D3D11_BUFFER_DESC ibd;
     SecureZeroMemory(&ibd, sizeof(D3D11_BUFFER_DESC));
-    ibd.Usage = D3D11_USAGE_DYNAMIC;
+    ibd.Usage = D3D11_USAGE_DEFAULT;
     ibd.ByteWidth = sizeof(unsigned long) * 3;
     ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    ibd.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA id;
     SecureZeroMemory(&id, sizeof(D3D11_SUBRESOURCE_DATA));

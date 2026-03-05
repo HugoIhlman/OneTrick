@@ -20,7 +20,7 @@ void cCamera::render()
     DirectX::XMFLOAT3 up, position, at;
     DirectX::XMVECTOR upVector, positionVector, atVector;
     float yaw, pitch, roll;
-    DirectX::XMMATRIX rotationMatrix;
+    DirectX::XMMATRIX rotationMatrix, translationMatrix, worldMatrix;
 
     up.x = 0.0f;
     up.y = 1.0f;
@@ -32,7 +32,7 @@ void cCamera::render()
     position.y = m_posY;
     position.z = m_posZ;
 
-    positionVector = DirectX::XMLoadFloat3(&position);
+    positionVector = DirectX::XMVectorSet(position.x, position.y, position.z, 1.0f);
 
     at.x = 0.0f;
     at.y = 0.0f;
@@ -45,9 +45,11 @@ void cCamera::render()
     roll = m_rotZ * 0.0174532925f;
 
     rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch,yaw,roll);
-
-    atVector = DirectX::XMVector3TransformCoord(atVector, rotationMatrix);
-    upVector = DirectX::XMVector3TransformCoord(upVector, rotationMatrix);
+    atVector = DirectX::XMVector3TransformNormal(atVector, rotationMatrix);
+    upVector = DirectX::XMVector3TransformNormal(upVector, rotationMatrix);
+    atVector = DirectX::XMVectorAdd(positionVector, atVector);
+    
+    
 
     viewMatrix = DirectX::XMMatrixLookAtLH(positionVector, atVector, upVector);
 }

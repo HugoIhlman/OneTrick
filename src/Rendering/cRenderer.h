@@ -6,6 +6,7 @@
 #include "cModel.h"
 #include "cShader.h"
 #include "cSwapChain.h"
+class cLight;
 class cCamera;
 using Microsoft::WRL::ComPtr;
 
@@ -16,7 +17,7 @@ public:
     ~cRenderer();
     
 
-    void render(cModel* _model, cCamera* _camera);
+    void render(cModel* _model, cCamera* _camera, cLight* _light);
     OT::renderdsc getRsc(){return {m_dxgiFactory.Get(), m_d3dDevice.Get(), m_d3dDeviceContext.Get()};}
     void createSwapChain(const OT::swapchaindsc& desc);
 private:
@@ -31,6 +32,8 @@ private:
     const FLOAT color[4] = {0.0f,0.2f,0.4f,1.0f};
 
     std::shared_ptr<cSwapChain> m_swap_chain = {};
+
+    float rotation = 0.0f;
 
 };
 

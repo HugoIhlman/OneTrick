@@ -30,7 +30,7 @@ bool cTexture::init(ID3D11Device* _device, ID3D11DeviceContext* _context, char* 
     textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     textureDesc.SampleDesc.Count = 1;
     textureDesc.SampleDesc.Quality = 0;
-    textureDesc.Usage = D3D11_USAGE_DYNAMIC;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
     textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
     textureDesc.CPUAccessFlags = 0;
     textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
@@ -77,6 +77,10 @@ bool cTexture::loadTarga(char* _filename)
         return false;
     }
     count = (unsigned int)fread(&targaHeader, sizeof(TargaHeader), 1, filePtr);
+    if (count != 1)
+    {
+        return false;
+    }
     m_height = (int)targaHeader.height;
     m_width = (int)targaHeader.width;
     bpp = (int)targaHeader.bpp;
@@ -90,7 +94,7 @@ bool cTexture::loadTarga(char* _filename)
 
     targaImage = new unsigned char[imageSize];
 
-    count = (unsigned int)fread(targaImage, sizeof(BYTE), imageSize, filePtr);
+    count = (unsigned int)fread(targaImage, 1, imageSize, filePtr);
     if (count != imageSize)
     {
         return false;
@@ -120,7 +124,7 @@ bool cTexture::loadTarga(char* _filename)
             k += 4;
             index += 4;
         }
-        k = m_width * 8;
+        k -= (m_width * 8);
     }
 
     delete [] targaImage;

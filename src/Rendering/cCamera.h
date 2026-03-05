@@ -7,7 +7,7 @@ public:
     cCamera();
     ~cCamera();
     void render();
-    DirectX::XMMATRIX getViewMatrix(){return viewMatrix;}
+    void getViewMatrix(DirectX::XMMATRIX& _matrix){_matrix = viewMatrix;}
 
     void setPosition(float,float,float);
     void setRotation(float,float,float);

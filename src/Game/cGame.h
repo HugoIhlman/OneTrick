@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "cCamera.h"
+#include "cLight.h"
 #include "../Core/cLogger.h"
 #include "../Rendering/cRenderer.h"
 #include "../Window/cWindow.h"
@@ -19,5 +20,6 @@ private:
     std::unique_ptr<cWindow> m_display = {};
     cModel* m_model;
     cCamera* m_camera;
+    cLight* m_light;
     bool m_isRunning = true;
 };

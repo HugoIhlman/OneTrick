@@ -20,10 +20,14 @@ private:
     {
         DirectX::XMFLOAT3 POSITION;
         DirectX::XMFLOAT2 TEXTURE;
+        DirectX::XMFLOAT3 NORMAL;
     };
 
     ID3D11Buffer* m_vertexBuffer;
     ID3D11Buffer* m_indexBuffer;
+
+    int m_vertexCount;
+    int m_indexCount;
     cTexture* m_Texture;
 
 };

@@ -7,7 +7,8 @@ public:
 
     void createShader();
     void createShape(ID3D11DeviceContext* _context);
-    bool setParams(ID3D11DeviceContext* _context, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture);
+    bool setParams(ID3D11DeviceContext* _context, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
+        DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, DirectX::XMFLOAT3 lightDirection, DirectX::XMFLOAT4 diffuseColor);
     ID3D11SamplerState** getSamplerState(){return &m_samplerState;}
 private:
 
@@ -16,6 +17,13 @@ private:
         DirectX::XMMATRIX world;
         DirectX::XMMATRIX view;
         DirectX::XMMATRIX projection;
+    };
+
+    struct LightBufferType
+    {
+        DirectX::XMFLOAT4 diffuseColor;
+        DirectX::XMFLOAT3 direction;
+        float padding;
     };
     
     ID3D11InputLayout* pLayout;
@@ -27,4 +35,5 @@ private:
     ID3D11DeviceContext* context;
     ID3D11Buffer* mbuffer;
     ID3D11SamplerState* m_samplerState;
+    ID3D11Buffer* m_lightBuffer;
 };

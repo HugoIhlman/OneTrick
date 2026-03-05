@@ -36,9 +36,11 @@ void cShader::createShader()
 
     D3D11_INPUT_ELEMENT_DESC ied[] = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-        {"TEXCOORD", 0,DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        {"TEXCOORD", 0,DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
-    device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+    unsigned int numElements = sizeof(ied)/sizeof(ied[0]);
+    device->CreateInputLayout(ied, numElements, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
     context->IASetInputLayout(pLayout);
 
     D3D11_BUFFER_DESC matrixBufferDesc;
@@ -66,6 +68,18 @@ void cShader::createShader()
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
+    D3D11_BUFFER_DESC lightBufferDesc;
+    SecureZeroMemory(&lightBufferDesc, sizeof(D3D11_BUFFER_DESC));
+    lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    lightBufferDesc.ByteWidth = sizeof(LightBufferType);
+    lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    lightBufferDesc.MiscFlags = 0;
+    lightBufferDesc.StructureByteStride = 0;
+
+    device->CreateBuffer(&lightBufferDesc, NULL, &m_lightBuffer);
+    
+
     device->CreateSamplerState(&samplerDesc, &m_samplerState);
     
 
@@ -77,22 +91,32 @@ void cShader::createShape(ID3D11DeviceContext* _context)
    
 }
 
-bool cShader::setParams(ID3D11DeviceContext* _context, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
+bool cShader::setParams(ID3D11DeviceContext* _context, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
+    DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, DirectX::XMFLOAT3 lightDirection, DirectX::XMFLOAT4 diffuseColor)
 {
-    MatrixBufferType* data;
+    MatrixBufferType* matrix_data;
+    LightBufferType* light_data;
     unsigned int bufferNumber;
     D3D11_MAPPED_SUBRESOURCE ms;
     worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
     viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
     projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);
     _context->Map(mbuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-    data = (MatrixBufferType*)ms.pData;
-    data->world = worldMatrix;
-    data->view = viewMatrix;
-    data->projection = projectionMatrix;
+    matrix_data = (MatrixBufferType*)ms.pData;
+    matrix_data->world = worldMatrix;
+    matrix_data->view = viewMatrix;
+    matrix_data->projection = projectionMatrix;
     _context->Unmap(mbuffer, NULL);
     bufferNumber = 0;
     _context->VSSetConstantBuffers(bufferNumber, 1, &mbuffer);
     _context->PSSetShaderResources(0, 1, &texture);
+    _context->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms);
+    light_data = (LightBufferType*)ms.pData;
+    light_data->diffuseColor = diffuseColor;
+    light_data->direction = lightDirection;
+    light_data->padding = 0.0f;
+    _context->Unmap(m_lightBuffer, 0);
+    bufferNumber = 0;
+    _context->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
     return true;
 }

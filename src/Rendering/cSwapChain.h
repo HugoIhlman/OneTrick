@@ -8,11 +8,12 @@ public:
     ~cSwapChain();
 
     IDXGISwapChain* getSwapChain(){return m_swapchain.Get();}
-    DirectX::XMMATRIX getProjectionMatrix(){return projectionMatrix;}
-    DirectX::XMMATRIX getWorldMatrix(){return worldMatrix;}
+    void getProjectionMatrix(DirectX::XMMATRIX& _m){_m = projectionMatrix;}
+    void getWorldMatrix(DirectX::XMMATRIX& _m){_m = worldMatrix;}
 
     
     Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapchain{};
+    ID3D11DepthStencilView* m_depthStencilView;
     ID3D11RenderTargetView* backBuffer;
     ID3D11Buffer* vBuffer;
 private:
@@ -22,7 +23,6 @@ private:
 
     ID3D11Texture2D* depthStencil;
     ID3D11DepthStencilState* m_depthStencilState;
-    ID3D11DepthStencilView* m_depthStencilView;
     ID3D11RasterizerState* m_rasterState;
 
     DirectX::XMMATRIX worldMatrix;
