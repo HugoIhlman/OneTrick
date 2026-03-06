@@ -1,5 +1,6 @@
 ﻿#include "cModel.h"
 
+#include <fstream>
 #include <iterator>
 
 cModel::cModel()
@@ -10,10 +11,17 @@ cModel::~cModel()
 {
     delete m_Texture;
     m_Texture = nullptr;
+    delete m_model;
+    m_model = nullptr;
 }
 
-bool cModel::initialize(ID3D11Device* _device, ID3D11DeviceContext* _context, char* _textureFileName)
+bool cModel::initialize(ID3D11Device* _device, ID3D11DeviceContext* _context, char* _textureFileName, char* _model)
 {
+    bool mresult = loadModel(_model);
+    if (!mresult)
+    {
+        return false;
+    }
     bool result = initializeBuffers(_device);
     if (!result)
     {
@@ -34,19 +42,25 @@ void cModel::render(ID3D11DeviceContext* _context)
 
 bool cModel::initializeBuffers(ID3D11Device* _device)
 {
-    VERTEX vertices[3] = {
-        {DirectX::XMFLOAT3(-1.0f,-1.0f,0.0f), DirectX::XMFLOAT2(0.0f,1.0f),DirectX::XMFLOAT3(0.0f,0.0f,-1.0f) },
-        {DirectX::XMFLOAT3(0.0f,1.0f,0.0f), DirectX::XMFLOAT2(0.5f,0.0f),DirectX::XMFLOAT3(0.0f,0.0f,-1.0f) },
-        {DirectX::XMFLOAT3(1.0f,-1.0f,0.0f), DirectX::XMFLOAT2(1.0f,1.0f),DirectX::XMFLOAT3(0.0f,0.0f,-1.0f) }
-    };
-    unsigned long indices[3];
-    indices[0] = 0;
-    indices[1] = 1;
-    indices[2] = 2;
+    VERTEX* vertices;
+    unsigned long* indices;
+    int i;
+
+    vertices = new VERTEX[m_vertexCount];
+    indices = new unsigned long[m_indexCount];
+    for (i = 0; i < m_vertexCount; ++i)
+    {
+        vertices[i].POSITION = DirectX::XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
+        vertices[i].TEXTURE = DirectX::XMFLOAT2(m_model[i].u, m_model[i].v);
+        vertices[i].NORMAL = DirectX::XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
+
+        indices[i] = i;
+    }
+    
     D3D11_BUFFER_DESC vbd;
     SecureZeroMemory(&vbd, sizeof(D3D11_BUFFER_DESC));
     vbd.Usage = D3D11_USAGE_DEFAULT;
-    vbd.ByteWidth = sizeof(vertices) * 3;
+    vbd.ByteWidth = sizeof(VERTEX) * m_vertexCount;
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     vbd.CPUAccessFlags = 0;
 
@@ -59,7 +73,7 @@ bool cModel::initializeBuffers(ID3D11Device* _device)
     D3D11_BUFFER_DESC ibd;
     SecureZeroMemory(&ibd, sizeof(D3D11_BUFFER_DESC));
     ibd.Usage = D3D11_USAGE_DEFAULT;
-    ibd.ByteWidth = sizeof(unsigned long) * 3;
+    ibd.ByteWidth = sizeof(unsigned long) * m_indexCount;
     ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     ibd.CPUAccessFlags = 0;
 
@@ -101,5 +115,47 @@ bool cModel::loadTexture(ID3D11Device* _device, ID3D11DeviceContext* _context, c
     {
         return false;
     }
+    return true;
+}
+
+bool cModel::loadModel(char* _model)
+{
+    std::ifstream fin;
+    char input;
+    int i;
+
+    fin.open(_model);
+    if (fin.fail())
+    {
+        return false;
+    }
+
+    fin.get(input);
+    while (input != ':')
+    {
+        fin.get(input);
+    }
+
+    fin >> m_vertexCount;
+
+    m_indexCount = m_vertexCount;
+
+    m_model = new MODEL[m_vertexCount];
+
+    fin.get(input);
+    while (input != ':')
+    {
+        fin.get(input);
+    }
+    fin.get(input);
+    fin.get(input);
+
+    for (i = 0; i < m_vertexCount; i++)
+    {
+        fin >> m_model[i].x >> m_model[i].y >> m_model[i].z;
+        fin >> m_model[i].u >> m_model[i].v;
+        fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
+    }
+    fin.close();
     return true;
 }

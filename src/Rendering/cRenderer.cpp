@@ -45,7 +45,7 @@ void cRenderer::render(cModel* _model, cCamera* _camera, cLight* _light)
     if (rotation < 0.0f)
         rotation += 360.0f;
     m_d3dDeviceContext->ClearRenderTargetView(m_swap_chain->backBuffer, color);
-    m_d3dDeviceContext->ClearDepthStencilView(m_swap_chain->m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f,0);
+    m_d3dDeviceContext->ClearDepthStencilView(m_swap_chain->m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f,0xFF);
     _camera->render();
     m_swap_chain->getWorldMatrix(world);
     m_swap_chain->getProjectionMatrix(proj);
@@ -56,7 +56,8 @@ void cRenderer::render(cModel* _model, cCamera* _camera, cLight* _light)
     _model->render(m_d3dDeviceContext.Get());
     shader->setParams(m_d3dDeviceContext.Get(), world, view, proj, _model->GetTexture(), _light->getDirection(), _light->getDiffuseColor());
     m_d3dDeviceContext->PSSetSamplers(0,1,shader->getSamplerState());
-    m_d3dDeviceContext->DrawIndexed(3, 0,0);
+    int id = _model->getIndexCount();
+    m_d3dDeviceContext->DrawIndexed(id, 0,0);
     m_swap_chain->getSwapChain()->Present(1,0);
 }
 
