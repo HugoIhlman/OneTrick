@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "Core.h"
+#include "../Math/cMatrix4x4.h"
+
 class cShader
 {
 public:
@@ -7,22 +9,22 @@ public:
 
     void createShader();
     void createShape(ID3D11DeviceContext* _context);
-    bool setParams(ID3D11DeviceContext* _context, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
-        DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, DirectX::XMFLOAT3 lightDirection, DirectX::XMFLOAT4 diffuseColor);
+    bool setParams(ID3D11DeviceContext* _context, OT::cMatrix4x4f worldMatrix, OT::cMatrix4x4f viewMatrix,
+        OT::cMatrix4x4f projectionMatrix, ID3D11ShaderResourceView* texture, OT::cVector3f lightDirection, OT::cVector4f diffuseColor);
     ID3D11SamplerState** getSamplerState(){return &m_samplerState;}
 private:
 
     struct MatrixBufferType
     {
-        DirectX::XMMATRIX world;
-        DirectX::XMMATRIX view;
-        DirectX::XMMATRIX projection;
+        OT::cMatrix4x4f world;
+        OT::cMatrix4x4f view;
+        OT::cMatrix4x4f projection;
     };
 
     struct LightBufferType
     {
-        DirectX::XMFLOAT4 diffuseColor;
-        DirectX::XMFLOAT3 direction;
+        OT::cVector4f diffuseColor;
+        OT::cVector3f direction;
         float padding;
     };
     

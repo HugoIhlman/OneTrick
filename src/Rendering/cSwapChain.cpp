@@ -122,11 +122,8 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     float fov = 3.141592654f / 4.0f;
     float aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 
-    projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 1000.f);
-
-    worldMatrix = DirectX::XMMatrixIdentity();
-
-    
+    auto dxMatrix = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 1000.f);
+    projectionMatrix = projectionMatrix.convertDXMatrix(dxMatrix);
 }
 
 cSwapChain::~cSwapChain()

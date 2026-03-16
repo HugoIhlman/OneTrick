@@ -1,5 +1,9 @@
 ﻿#include "cCamera.h"
 
+#include "../Math/cMatrix4x4.h"
+#include "../Math/cVector3.h"
+#include "../Math/cVector4.h"
+
 cCamera::cCamera()
 {
     m_posX = 0.f;
@@ -17,41 +21,30 @@ cCamera::~cCamera()
 
 void cCamera::render()
 {
-    DirectX::XMFLOAT3 up, position, at;
-    DirectX::XMVECTOR upVector, positionVector, atVector;
+    OT::cVector3f up, position, at;
     float yaw, pitch, roll;
-    DirectX::XMMATRIX rotationMatrix, translationMatrix, worldMatrix;
+    OT::cMatrix4x4f rotationMatrix, translationMatrix, worldMatrix;
 
-    up.x = 0.0f;
-    up.y = 1.0f;
-    up.z = 0.0f;
+    up = {0.0f,1.0f,0.0f};
 
-    upVector = DirectX::XMLoadFloat3(&up);
+    position = {m_posX,m_posY,m_posZ};
 
-    position.x = m_posX;
-    position.y = m_posY;
-    position.z = m_posZ;
+    at = {0.0f,0.0f,1.0f};
 
-    positionVector = DirectX::XMVectorSet(position.x, position.y, position.z, 1.0f);
-
-    at.x = 0.0f;
-    at.y = 0.0f;
-    at.z = 1.0f;
-
-    atVector = DirectX::XMLoadFloat3(&at);
+    
 
     pitch = m_rotX * 0.0174532925f;
     yaw = m_rotY * 0.0174532925f;
     roll = m_rotZ * 0.0174532925f;
 
-    rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch,yaw,roll);
-    atVector = DirectX::XMVector3TransformNormal(atVector, rotationMatrix);
-    upVector = DirectX::XMVector3TransformNormal(upVector, rotationMatrix);
-    atVector = DirectX::XMVectorAdd(positionVector, atVector);
+    rotationMatrix = rotationMatrix.convertDXMatrix(DirectX::XMMatrixRotationRollPitchYaw(pitch,yaw,roll));
+    at = at.tranformVec(rotationMatrix);
+    up = up.tranformVec(rotationMatrix);
+    at = position + at;
     
     
 
-    viewMatrix = DirectX::XMMatrixLookAtLH(positionVector, atVector, upVector);
+    viewMatrix = viewMatrix.lookAt();
 }
 
 void cCamera::setPosition(float x, float y, float z)

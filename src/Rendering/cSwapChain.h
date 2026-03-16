@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <wrl.h>
 #include "Core.h"
+#include "../Math/cMatrix4x4.h"
+
 class cSwapChain
 {
 public:
@@ -9,7 +11,7 @@ public:
 
     IDXGISwapChain* getSwapChain(){return m_swapchain.Get();}
     void getProjectionMatrix(DirectX::XMMATRIX& _m){_m = projectionMatrix;}
-    void getWorldMatrix(DirectX::XMMATRIX& _m){_m = worldMatrix;}
+    void getWorldMatrix(OT::cMatrix4x4f& _m){_m = worldMatrix;}
 
     
     Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapchain{};
@@ -25,8 +27,8 @@ private:
     ID3D11DepthStencilState* m_depthStencilState;
     ID3D11RasterizerState* m_rasterState;
 
-    DirectX::XMMATRIX worldMatrix;
-    DirectX::XMMATRIX projectionMatrix;
+    OT::cMatrix4x4f worldMatrix;
+    OT::cMatrix4x4f projectionMatrix;
 
     void* m_handle;
 };

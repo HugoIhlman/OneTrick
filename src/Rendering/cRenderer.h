@@ -6,6 +6,7 @@
 #include "cModel.h"
 #include "cShader.h"
 #include "cSwapChain.h"
+#include "../Math/cVector4.h"
 class cLight;
 class cCamera;
 using Microsoft::WRL::ComPtr;
@@ -29,8 +30,7 @@ private:
 
     cShader* shader;
     
-    const FLOAT color[4] = {0.0f,0.2f,0.4f,1.0f};
-
+    const OT::cVector4f color = {0.2f,0.2f,0.3f,1.0f};
     std::shared_ptr<cSwapChain> m_swap_chain = {};
 
     float rotation = 0.0f;

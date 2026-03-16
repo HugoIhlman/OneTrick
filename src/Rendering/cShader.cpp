@@ -91,16 +91,16 @@ void cShader::createShape(ID3D11DeviceContext* _context)
    
 }
 
-bool cShader::setParams(ID3D11DeviceContext* _context, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix,
-    DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, DirectX::XMFLOAT3 lightDirection, DirectX::XMFLOAT4 diffuseColor)
+bool cShader::setParams(ID3D11DeviceContext* _context, OT::cMatrix4x4f worldMatrix, OT::cMatrix4x4f viewMatrix,
+        OT::cMatrix4x4f projectionMatrix, ID3D11ShaderResourceView* texture, OT::cVector3f lightDirection, OT::cVector4f diffuseColor);
 {
     MatrixBufferType* matrix_data;
     LightBufferType* light_data;
     unsigned int bufferNumber;
     D3D11_MAPPED_SUBRESOURCE ms;
-    worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
-    viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
-    projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);
+    worldMatrix.transpose();
+    viewMatrix
+    projectionMatrix.transpose();
     _context->Map(mbuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
     matrix_data = (MatrixBufferType*)ms.pData;
     matrix_data->world = worldMatrix;
