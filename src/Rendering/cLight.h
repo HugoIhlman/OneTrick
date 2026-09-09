@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <DirectXMath.h>
 
+#include "../Math/cVector3.h"
+#include "../Math/cVector4.h"
+
 class cLight
 {
 public:
@@ -10,9 +13,9 @@ public:
     void setDiffuseColor(float,float,float,float);
     void setDirection(float,float,float);
 
-    DirectX::XMFLOAT4 getDiffuseColor(){return m_diffuseColor;}
-    DirectX::XMFLOAT3 getDirection(){return m_direction;}
+    OT::cVector4f getDiffuseColor(){return m_diffuseColor;}
+    OT::cVector3f getDirection(){return m_direction;}
 private:
-    DirectX::XMFLOAT4 m_diffuseColor;
-    DirectX::XMFLOAT3 m_direction;
+    OT::cVector4f m_diffuseColor;
+    OT::cVector3f m_direction;
 };

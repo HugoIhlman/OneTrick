@@ -40,7 +40,7 @@ cRenderer::~cRenderer()
 
 void cRenderer::render(cModel* _model, cCamera* _camera, cLight* _light)
 {
-    DirectX::XMMATRIX view, world, proj;
+    OT::cMatrix4x4f view, world, proj;
 
     rotation -= 0.016f *0.2f;
     if (rotation < 0.0f)
@@ -54,8 +54,8 @@ void cRenderer::render(cModel* _model, cCamera* _camera, cLight* _light)
     m_swap_chain->getProjectionMatrix(proj);
     _camera->getViewMatrix(view);
 
-    world = DirectX::XMMatrixRotationY(rotation);
-    world *= DirectX::XMMatrixRotationX(rotation);
+    world.rotate(OT::cVector3f(0.f,1.f,0.f), rotation);
+    world.rotate(OT::cVector3f(1.f,0.f,0.f), rotation);
 
     _model->render(m_d3dDeviceContext.Get());
 

@@ -2,9 +2,11 @@
 #include <vector>
 
 #include "cVector3.h"
-class cMatrix4x4;
+
 namespace OT
 {
+    template <typename T>class cMatrix4x4;
+
     template <typename T>
     class cVector4
     {
@@ -33,7 +35,7 @@ namespace OT
     typedef cVector4<float> cVector4f;
 
     template <typename T>
-    cVector4<T>& cVector4<T>::tranformVec(const cMatrix4x4<T>& _matrix)
+    inline cVector4<T>& cVector4<T>::tranformVec(const cMatrix4x4<T>& _matrix)
     {
         *this = {
             (x * _matrix.x.x) + (y * _matrix.y.x) + (z * _matrix.z.x) + (w * _matrix.w.x),
@@ -44,5 +46,11 @@ namespace OT
         return *this;
     }
 
+}
+
+namespace OT
+{
+    template <typename T>
+    constexpr cVector4<T>::cVector4(const cVector3<T>& _v, const T _w): x(static_cast<T>(_v.x)), y(static_cast<T>(_v.y)),z(static_cast<T>(_v.z)), w(static_cast<T>(_w)){}    
 }
 

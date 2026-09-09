@@ -10,8 +10,9 @@ public:
     ~cSwapChain();
 
     IDXGISwapChain* getSwapChain(){return m_swapchain.Get();}
-    void getProjectionMatrix(DirectX::XMMATRIX& _m){_m = projectionMatrix;}
+    void getProjectionMatrix(OT::cMatrix4x4f& _m){_m = projectionMatrix;}
     void getWorldMatrix(OT::cMatrix4x4f& _m){_m = worldMatrix;}
+    void getWorldMatrixDXMath(DirectX::XMMATRIX& _m){_m = worldMatrixDXMath;}
 
     
     Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapchain{};
@@ -29,6 +30,8 @@ private:
 
     OT::cMatrix4x4f worldMatrix;
     OT::cMatrix4x4f projectionMatrix;
+    
+    DirectX::XMMATRIX worldMatrixDXMath;
 
     void* m_handle;
 };

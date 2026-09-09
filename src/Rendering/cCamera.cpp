@@ -32,19 +32,21 @@ void cCamera::render()
     at = {0.0f,0.0f,1.0f};
 
     
-
+ 
     pitch = m_rotX * 0.0174532925f;
     yaw = m_rotY * 0.0174532925f;
     roll = m_rotZ * 0.0174532925f;
 
-    rotationMatrix = rotationMatrix.convertDXMatrix(DirectX::XMMatrixRotationRollPitchYaw(pitch,yaw,roll));
+    rotationMatrix = rotationMatrix.rotate(OT::cVector3f(1.f,0.f,0.f), pitch);
+    rotationMatrix = rotationMatrix.rotate(OT::cVector3f(0.f,1.f,0.f), yaw);
+    rotationMatrix = rotationMatrix.rotate(OT::cVector3f(0.f,0.f,1.f), roll);
     at = at.tranformVec(rotationMatrix);
     up = up.tranformVec(rotationMatrix);
     at = position + at;
     
     
 
-    viewMatrix = viewMatrix.lookAt();
+    viewMatrix = viewMatrix.lookAt(position, at, up);
 }
 
 void cCamera::setPosition(float x, float y, float z)
