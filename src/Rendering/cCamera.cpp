@@ -33,9 +33,9 @@ void cCamera::render()
 
     
  
-    pitch = m_rotX * 0.0174532925f;
-    yaw = m_rotY * 0.0174532925f;
-    roll = m_rotZ * 0.0174532925f;
+    pitch = m_rotX;
+    yaw = m_rotY;
+    roll = m_rotZ;
 
     rotationMatrix = rotationMatrix.rotate(OT::cVector3f(1.f,0.f,0.f), pitch);
     rotationMatrix = rotationMatrix.rotate(OT::cVector3f(0.f,1.f,0.f), yaw);

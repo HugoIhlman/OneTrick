@@ -119,7 +119,7 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     viewport.MinDepth = 0.0f;
 
     context->RSSetViewports(1, &viewport);
-    float fov = 3.141592654f / 4.0f;
+    float fov = 90.0f;
     float aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
     float _near = 0.1f;
     float _far = 1000.0f;    

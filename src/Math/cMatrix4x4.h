@@ -33,6 +33,7 @@ namespace OT
         inline cMatrix4x4& lookAt(const cVector3<T>& _pos, const cVector3<T> _target, const cVector3<T> _up);
         inline cMatrix4x4& rotate(const cVector3<T>& axis, const T angle);
         inline cMatrix4x4& perspective(const T _fov, const T _aspect, const T _near, const T _far);
+        inline cMatrix4x4& invert();
     
     };
 
@@ -41,6 +42,7 @@ namespace OT
     {
         template <typename T> inline cMatrix4x4<T> rotate(const cVector3<T>& axis, const T angle) {return cMatrix4x4<T>().rotate(axis, angle);}       
         template <typename T> inline cMatrix4x4<T> perspective(const T _fov, const T _aspect, const T _near, const T _far) {return cMatrix4x4<T>().perspective(_fov, _aspect, _near, _far);}       
+        template <typename T> inline cMatrix4x4<T> invert(const cMatrix4x4<T>& _m) {return cMatrix4x4<T>(_m).invert();}
     }
     template <typename T>
     cMatrix4x4<T>& cMatrix4x4<T>::transpose()
@@ -112,7 +114,18 @@ namespace OT
         return *this;
     }
 
-
+    template <typename T>
+    cMatrix4x4<T>& cMatrix4x4<T>::invert()
+    {
+        *this = 
+        {
+            {x},
+            {y},
+            {z.x * -1, z.y * -1, z.z * -1, z.w * -1},
+            {w}
+        };
+        return *this;
+    }
 }
 
 

@@ -55,7 +55,6 @@ void cRenderer::render(cModel* _model, cCamera* _camera, cLight* _light)
     _camera->getViewMatrix(view);
 
     world.rotate(OT::cVector3f(0.f,1.f,0.f), rotation);
-    world.rotate(OT::cVector3f(1.f,0.f,0.f), rotation);
 
     _model->render(m_d3dDeviceContext.Get());
 
