@@ -29,21 +29,22 @@ namespace OT
         constexpr cVector3 operator/ (const T2 _t) const {return {static_cast<T>(x / _t), static_cast<T>(y / _t), static_cast<T>(z / _t)};}
         
         template <typename T2>
-        inline cVector3& operator *=(const T2 _t) {x = static_cast<T>(x*_t); y = static_cast<T>(y*_t); z = static_cast<T>(z*_t); return *this;}
-
-        inline cVector3& transformVec(const cMatrix4x4<T>& _matrix);
         
-        inline T length() const {return Math::sqrt(dot());}
+        cVector3& operator *=(const T2 _t) {x = static_cast<T>(x*_t); y = static_cast<T>(y*_t); z = static_cast<T>(z*_t); return *this;}
+        
+        cVector3& transformVec(const cMatrix4x4<T>& _matrix);
+        
+        T length() const {return Math::sqrt(dot());}
         
         constexpr T dot () const {return (x * x) + (y * y) + (z * z);}
         
         constexpr T dot (const cVector3& _vector) const {return (x * _vector.x) + (y * _vector.y) + (z * _vector.z);}
         
-        inline cVector3& normalize(const T _length) {return *this *= (_length > T(0)  ) ? (T(1) / _length): T(0);}
+        cVector3& normalize(const T _length) {return *this *= (_length > T(0)  ) ? (T(1) / _length): T(0);}
         
-        inline cVector3& normalize() {normalize(length()); return *this;}
+        cVector3& normalize() {normalize(length()); return *this;}
         
-        inline cVector3& cross(const cVector3<T>& _vector) {*this = {(y * _vector.z) - (z * _vector.y), (z * _vector.x) - (x * _vector.z), (x * _vector.y) - (y * _vector.x)}; return *this;}
+        cVector3& cross(const cVector3& _vector) {*this = {(y * _vector.z) - (z * _vector.y), (z * _vector.x) - (x * _vector.z), (x * _vector.y) - (y * _vector.x)}; return *this;}
 
         T x = T(0);
         T y = T(0);
@@ -53,7 +54,9 @@ namespace OT
 
         
     };
-        typedef cVector3<float> cVector3f;
+    
+    
+    typedef cVector3<float> cVector3f;
     
     
     
@@ -63,9 +66,9 @@ namespace OT
         
         template <typename T> constexpr  cVector3<T> normalize(const cVector3<T>& _vector, const T _length) {return (_length > T(0)) ? (_vector / _length) : cVector3<T>(T(0));}
         
-        template <typename T> inline cVector3<T> normalize(const cVector3<T>& _vector) {return normalize(_vector, _vector.length());}
+        template <typename T> cVector3<T> normalize(const cVector3<T>& _vector) {return normalize(_vector, _vector.length());}
         
-        template <typename T> inline cVector3<T> tranformVec(const cVector3<T>& _vector, const cMatrix4x4<T>& _m) {return cVector3<T>(_vector).tranformVec(_m);}
+        template <typename T> cVector3<T> tranformVec(const cVector3<T>& _vector, const cMatrix4x4<T>& _m) {return cVector3<T>(_vector).tranformVec(_m);}
         
     }
     
@@ -79,7 +82,7 @@ namespace OT
 
     
     template<typename T>
-    inline cVector3<T>& cVector3<T>::transformVec(const cMatrix4x4<T>& _matrix)
+    cVector3<T>& cVector3<T>::transformVec(const cMatrix4x4<T>& _matrix)
     {
         *this = {
             (x * _matrix.x.x) + (y * _matrix.y.x) + (z * _matrix.z.x),

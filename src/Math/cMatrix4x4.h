@@ -16,52 +16,53 @@ namespace OT
         constexpr cMatrix4x4 operator+ (const cMatrix4x4& _m) const {return x + _m.x, y +_m.y, z+_m.z, w+_m.w;}
         constexpr cMatrix4x4 operator* ( const cMatrix4x4& _m ) const { return { { ( _m.x * x.x ) + ( _m.y * x.y ) + ( _m.z * x.z ) + ( _m.w * x.w ) }, { ( _m.x * y.x ) + ( _m.y * y.y ) + ( _m.z * y.z ) + ( _m.w * y.w ) }, { ( _m.x * z.x ) + ( _m.y * z.y ) + ( _m.z * z.z ) + ( _m.w * z.w ) }, { ( _m.x * w.x ) + ( _m.y * w.y ) + ( _m.z * w.z ) + ( _m.w * w.w ) } }; }
         
-        cVector3<T>& left(void) {return *reinterpret_cast<cVector3<T>*>(&x);}
-        const cVector3<T>& left(void) const {return *reinterpret_cast<const cVector3<T>*>(&x);}
+        cVector3<T>& left() {return *reinterpret_cast<cVector3<T>*>(&x);}
+        const cVector3<T>& left() const {return *reinterpret_cast<const cVector3<T>*>(&x);}
         
-        cVector3<T>& up(void) {return *reinterpret_cast<cVector3<T>*>(&y);}
-        const cVector3<T>& up(void) const {return *reinterpret_cast<const cVector3<T>*>(&y);}
+        cVector3<T>& up() {return *reinterpret_cast<cVector3<T>*>(&y);}
+        const cVector3<T>& up() const {return *reinterpret_cast<const cVector3<T>*>(&y);}
         
-        cVector3<T>& at(void) {return *reinterpret_cast<cVector3<T>*>(&z);}
-        const cVector3<T>& at(void) const {return *reinterpret_cast<const cVector3<T>*>(&z);}
+        cVector3<T>& at() {return *reinterpret_cast<cVector3<T>*>(&z);}
+        const cVector3<T>& at() const {return *reinterpret_cast<const cVector3<T>*>(&z);}
         
-        cVector3<T>& pos(void) {return *reinterpret_cast<cVector3<T>*>(&w);}
-        const cVector3<T>& pos(void) const {return *reinterpret_cast<const cVector3<T>*>(&w);}
+        cVector3<T>& pos() {return *reinterpret_cast<cVector3<T>*>(&w);}
+        const cVector3<T>& pos() const {return *reinterpret_cast<const cVector3<T>*>(&w);}
 
         cVector4<T> x = {T(1), T(0), T(0), T(0)};
         cVector4<T> y = {T(0), T(1), T(0), T(0)};
         cVector4<T> z = {T(0), T(0), T(1), T(0)};
         cVector4<T> w = {T(0), T(0), T(0), T(1)};
         
-        inline cMatrix4x4& transpose();
+        cMatrix4x4& transpose();
         
-        inline cMatrix4x4& lookAt(const cVector3<T>& _pos, const cVector3<T> _target, const cVector3<T> _up);
+        cMatrix4x4& lookAt(const cVector3<T>& _pos, const cVector3<T> _target, const cVector3<T> _up);
         
-        inline cMatrix4x4& rotate(const cVector3<T>& axis, const T angle, const bool replace);
+        cMatrix4x4& rotate(const cVector3<T>& axis, const T angle, const bool replace);
         
-        inline cMatrix4x4& perspective(const T _fov, const T _aspect, const T _near, const T _far);
+        cMatrix4x4& perspective(const T _fov, const T _aspect, const T _near, const T _far);
         
-        inline cMatrix4x4& invert();
+        cMatrix4x4& invert();
         
-        inline cMatrix4x4& translate(const cVector3<T>& _translation);
+        cMatrix4x4& translate(const cVector3<T>& _translation);
         
-        inline cMatrix4x4& scale(const cVector3<T>& _scale);
+        cMatrix4x4& scale(const cVector3<T>& _scale);
     
     };
 
     typedef cMatrix4x4<float> cMatrix4x4f;
     namespace Matrix4x4
     {
-        template <typename T> inline cMatrix4x4<T> rotate(const cVector3<T>& axis, const T angle, const bool replace) {return cMatrix4x4<T>().rotate(axis, angle, replace);}  
+        template <typename T> cMatrix4x4<T> rotate(const cVector3<T>& axis, const T angle, const bool replace) {return cMatrix4x4<T>().rotate(axis, angle, replace);}  
         
-        template <typename T> inline cMatrix4x4<T> perspective(const T _fov, const T _aspect, const T _near, const T _far) {return cMatrix4x4<T>().perspective(_fov, _aspect, _near, _far);}
+        template <typename T> cMatrix4x4<T> perspective(const T _fov, const T _aspect, const T _near, const T _far) {return cMatrix4x4<T>().perspective(_fov, _aspect, _near, _far);}
         
-        template <typename T> inline cMatrix4x4<T> invert(const cMatrix4x4<T>& _m) {return cMatrix4x4<T>(_m).invert();}
+        template <typename T> cMatrix4x4<T> invert(const cMatrix4x4<T>& _m) {return cMatrix4x4<T>(_m).invert();}
         
-        template <typename T> inline cMatrix4x4<T> translate(const cVector3<T>& _translation) {return cMatrix4x4<T>().translate(_translation);}
+        template <typename T> cMatrix4x4<T> translate(const cVector3<T>& _translation) {return cMatrix4x4<T>().translate(_translation);}
         
-        template <typename T> inline cMatrix4x4<T> scale(const cVector3<T>& _scale) {return  cMatrix4x4<T>().scale(_scale);}
+        template <typename T> cMatrix4x4<T> scale(const cVector3<T>& _scale) {return  cMatrix4x4<T>().scale(_scale);}
     }
+    
     template <typename T>
     cMatrix4x4<T>& cMatrix4x4<T>::transpose()
     {
@@ -106,7 +107,7 @@ namespace OT
     }
     
     template <typename T>
-    inline cMatrix4x4<T>& cMatrix4x4<T>::perspective(const T _fov, const T _aspect, const T _near, const T _far)
+    cMatrix4x4<T>& cMatrix4x4<T>::perspective(const T _fov, const T _aspect, const T _near, const T _far)
     {
         const T cotan = T(1) / Math::tan(MathExt::degToRad(_fov / T(2)));
         const T depth = _far - _near;
@@ -124,7 +125,7 @@ namespace OT
     }
     
     template <typename T>
-    inline cMatrix4x4<T>& cMatrix4x4<T>::rotate(const cVector3<T>& axis, const T angle, const bool replace)
+    cMatrix4x4<T>& cMatrix4x4<T>::rotate(const cVector3<T>& axis, const T angle, const bool replace)
     {
         const T rad = MathExt::degToRad(angle);
         const T s = Math::sin(rad);

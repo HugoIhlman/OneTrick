@@ -113,8 +113,8 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
 
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
-    viewport.Height = OT::SCREEN_HEIGHT;
-    viewport.Width = OT::SCREEN_WIDTH;
+    viewport.Height = (FLOAT)OT::SCREEN_HEIGHT;
+    viewport.Width = (FLOAT)OT::SCREEN_WIDTH;
     viewport.MaxDepth = 1.0f;
     viewport.MinDepth = 0.0f;
 
@@ -181,8 +181,8 @@ void cSwapChain::resize()
 
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
-    viewport.Height = OT::SCREEN_HEIGHT;
-    viewport.Width = OT::SCREEN_WIDTH;
+    viewport.Height = (FLOAT)OT::SCREEN_HEIGHT;
+    viewport.Width = (FLOAT)OT::SCREEN_WIDTH;
     viewport.MaxDepth = 1.0f;
     viewport.MinDepth = 0.0f;
 
