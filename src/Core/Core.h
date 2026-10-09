@@ -3,8 +3,7 @@
 #include <DirectXMath.h>
 #include <dxgi.h>
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+
 namespace OT
 {
     class cWindow;
@@ -13,6 +12,9 @@ namespace OT
     class cSwapChain;
     class cLogger;
 
+    inline int SCREEN_HEIGHT = 720;
+    inline int SCREEN_WIDTH = 1280;
+    
     struct swapchaindsc
     {
         void* winHandle;

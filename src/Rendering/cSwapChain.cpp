@@ -12,8 +12,8 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     DXGI_SWAP_CHAIN_DESC dxgi_swap_chain_desc;
 
     SecureZeroMemory(&dxgi_swap_chain_desc, sizeof(DXGI_SWAP_CHAIN_DESC));
-    dxgi_swap_chain_desc.BufferDesc.Width = SCREEN_WIDTH;
-    dxgi_swap_chain_desc.BufferDesc.Height = SCREEN_HEIGHT;
+    dxgi_swap_chain_desc.BufferDesc.Width = OT::SCREEN_WIDTH;
+    dxgi_swap_chain_desc.BufferDesc.Height = OT::SCREEN_HEIGHT;
     dxgi_swap_chain_desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     dxgi_swap_chain_desc.BufferCount = 1;
     dxgi_swap_chain_desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -43,8 +43,8 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
 
     D3D11_TEXTURE2D_DESC depthBufferDesc;
     SecureZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
-    depthBufferDesc.Height = SCREEN_HEIGHT;
-    depthBufferDesc.Width = SCREEN_WIDTH;
+    depthBufferDesc.Height = OT::SCREEN_HEIGHT;
+    depthBufferDesc.Width = OT::SCREEN_WIDTH;
     depthBufferDesc.MipLevels = 1;
     depthBufferDesc.ArraySize = 1;
     depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -94,7 +94,7 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     D3D11_RASTERIZER_DESC rasterDesc;
     SecureZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
     rasterDesc.AntialiasedLineEnable = false;
-    rasterDesc.CullMode = D3D11_CULL_NONE;
+    rasterDesc.CullMode = D3D11_CULL_BACK;
     rasterDesc.DepthBias = 0;
     rasterDesc.DepthBiasClamp = 0.0f;
     rasterDesc.DepthClipEnable = true;
@@ -113,14 +113,14 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
 
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
-    viewport.Height = SCREEN_HEIGHT;
-    viewport.Width = SCREEN_WIDTH;
+    viewport.Height = OT::SCREEN_HEIGHT;
+    viewport.Width = OT::SCREEN_WIDTH;
     viewport.MaxDepth = 1.0f;
     viewport.MinDepth = 0.0f;
 
     context->RSSetViewports(1, &viewport);
-    float fov = 90.0f;
-    float aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
+    float fov = 60.0f;
+    float aspect = (float)OT::SCREEN_WIDTH / (float)OT::SCREEN_HEIGHT;
     float _near = 0.01f;
     float _far = 1000.0f;    
     
@@ -129,4 +129,70 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
 
 cSwapChain::~cSwapChain()
 {
+}
+
+void cSwapChain::resize()
+{
+    ID3D11RenderTargetView* nullviews[] = {nullptr};
+    context->OMSetRenderTargets(_countof(nullviews), nullviews, nullptr);
+    backBuffer->Release();
+    backBuffer = nullptr;
+    depthStencil->Release();
+    depthStencil = nullptr;
+    
+    HRESULT hr = m_swapchain->ResizeBuffers(0, OT::SCREEN_WIDTH, OT::SCREEN_HEIGHT, DXGI_FORMAT_UNKNOWN, 0);
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("gay");
+    }
+    ID3D11Texture2D* pBackBuffer;
+    m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+    device->CreateRenderTargetView(pBackBuffer, nullptr, &backBuffer);
+    pBackBuffer->Release();
+    
+    D3D11_TEXTURE2D_DESC depthBufferDesc;
+    SecureZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
+    depthBufferDesc.Height = OT::SCREEN_HEIGHT;
+    depthBufferDesc.Width = OT::SCREEN_WIDTH;
+    depthBufferDesc.MipLevels = 1;
+    depthBufferDesc.ArraySize = 1;
+    depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthBufferDesc.SampleDesc.Count = 1;
+    depthBufferDesc.SampleDesc.Quality = 0;
+    depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    depthBufferDesc.CPUAccessFlags = 0;
+    depthBufferDesc.MiscFlags = 0;
+    device->CreateTexture2D(&depthBufferDesc, NULL, &depthStencil);
+    
+    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+    SecureZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+    depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+    device->CreateDepthStencilView(depthStencil, &depthStencilViewDesc, &m_depthStencilView);
+
+    context->OMSetRenderTargets(1, &backBuffer, m_depthStencilView);
+    
+    
+    D3D11_VIEWPORT viewport;
+    SecureZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.Height = OT::SCREEN_HEIGHT;
+    viewport.Width = OT::SCREEN_WIDTH;
+    viewport.MaxDepth = 1.0f;
+    viewport.MinDepth = 0.0f;
+
+    context->RSSetViewports(1, &viewport);
+    float fov = 90.0f;
+    float aspect = (float)OT::SCREEN_WIDTH / (float)OT::SCREEN_HEIGHT;
+    float _near = 0.01f;
+    float _far = 1000.0f;    
+    
+    projectionMatrix.perspective(fov,aspect, _near, _far);
+    
+    
 }

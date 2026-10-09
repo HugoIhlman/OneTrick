@@ -13,6 +13,7 @@ public:
     void getProjectionMatrix(OT::cMatrix4x4f& _m){_m = projectionMatrix;}
     void getWorldMatrix(OT::cMatrix4x4f& _m){_m = worldMatrix;}
     void getWorldMatrixDXMath(DirectX::XMMATRIX& _m){_m = worldMatrixDXMath;}
+    void resize();
 
     
     Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapchain{};

@@ -22,7 +22,7 @@ namespace OT
         template < typename T2 >
         constexpr cVector4  operator* ( const T2 _t ) const        { return { static_cast< T >( x * _t ), static_cast< T >( y * _t ), static_cast< T >( z * _t ), static_cast< T >( w * _t ) }; }
 
-        inline cVector4& tranformVec(const cMatrix4x4<T>& _matrix);
+        inline cVector4& transformVec(const cMatrix4x4<T>& _matrix);
 
         T x = T(0);
         T y = T(0);
@@ -32,13 +32,12 @@ namespace OT
         constexpr std::vector<T> ToVector() const
         {
             return {x,y,z,w};
-            
         }         
     };
     typedef cVector4<float> cVector4f;
 
     template <typename T>
-    inline cVector4<T>& cVector4<T>::tranformVec(const cMatrix4x4<T>& _matrix)
+    inline cVector4<T>& cVector4<T>::transformVec(const cMatrix4x4<T>& _matrix)
     {
         *this = {
             (x * _matrix.x.x) + (y * _matrix.y.x) + (z * _matrix.z.x) + (w * _matrix.w.x),

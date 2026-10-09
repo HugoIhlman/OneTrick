@@ -1,13 +1,16 @@
 ﻿#include "cGame.h"
 
+#include <string>
 #include <windows.h>
+
+#include "cCameraController.h"
 
 cGame::cGame()
 {
     m_model = new cModel("Asset/Textures/DOHA.tga", "Asset/Models/DOHA.txt");
     m_cube = new cModel("Asset/Textures/snurran.tga", "Asset/Models/cube.txt" );
     std::vector<cModel*> models = {m_model, m_cube};
-    m_logger = std::make_unique<cLogger>(cLogger::LogLevel::Info);
+    m_logger = std::make_shared<cLogger>(cLogger::LogLevel::Info);
     m_renderer = std::make_unique<cRenderer>(models);
     m_display = std::make_unique<cWindow>(*m_renderer);
     m_model->setPosition(OT::cVector3f(0.0f,0.0f, 5.0f));
@@ -20,7 +23,7 @@ cGame::cGame()
     m_light->setDiffuseColor(1.0f,1.0f,1.0f,1.0f);
     m_light->setDirection(0.2f,-1.0f,1.0f);
     m_camera = new cCamera;
-    m_camera->setPosition(0.0f,0.0f,0.0f);
+    m_cameraController = new cCameraController(m_camera, m_logger);
 }
 
 cGame::~cGame()
@@ -33,7 +36,6 @@ cGame::~cGame()
 
 void cGame::run()
 {
-    MSG msg{};
     float rotation = 0.0f;
     while (m_isRunning)
     {
@@ -42,16 +44,35 @@ void cGame::run()
             rotation += 360.0f;
         m_renderer->render(m_camera, m_light);
         m_model->setRotation(OT::cVector3f(0.0f, 1.0f, 0.0f), rotation);
-        
-        while (PeekMessage(&msg, NULL, 0,0, PM_REMOVE))
+        m_cameraController->update();
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
         {
-            if (msg.message == WM_QUIT)
+            if (event.type == SDL_EVENT_QUIT)
             {
                 m_isRunning = false;
                 break;
             }
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            if (event.type == SDL_EVENT_WINDOW_RESIZED)
+            {
+                SDL_GetWindowSizeInPixels(m_display->getWindow(), &OT::SCREEN_WIDTH, &OT::SCREEN_HEIGHT);
+                m_renderer->resize();
+            }
+            if (event.type == SDL_EVENT_KEY_DOWN)
+            {
+                if (event.key.key == SDLK_ESCAPE)
+                {
+                    m_mouseHidden = !m_mouseHidden;
+                    SDL_SetWindowRelativeMouseMode(m_display->getWindow(), m_mouseHidden);
+                }
+                if (event.key.key == SDLK_F11)
+                {
+                    m_fullscreen = !m_fullscreen;
+                    SDL_SetWindowFullscreen(m_display->getWindow(), m_fullscreen);
+                    SDL_GetWindowSizeInPixels(m_display->getWindow(), &OT::SCREEN_WIDTH, &OT::SCREEN_HEIGHT);
+                    m_renderer->resize();
+                }
+            }
         }
         Sleep(1);
     }

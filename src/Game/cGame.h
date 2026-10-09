@@ -7,6 +7,8 @@
 #include "../Rendering/cRenderer.h"
 #include "../Window/cWindow.h"
 
+class cCameraController;
+
 class cGame
 {
 public:
@@ -15,12 +17,15 @@ public:
     void run();
 
 private:
-    std::unique_ptr<cLogger> m_logger = {};
+    std::shared_ptr<cLogger> m_logger = {};
     std::unique_ptr<cRenderer> m_renderer = {};
     std::unique_ptr<cWindow> m_display = {};
     cModel* m_model;
     cModel* m_cube;
     cCamera* m_camera;
     cLight* m_light;
+    cCameraController* m_cameraController;
     bool m_isRunning = true;
+    bool m_mouseHidden = true;
+    bool m_fullscreen = false;
 };

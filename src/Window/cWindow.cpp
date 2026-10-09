@@ -22,18 +22,15 @@ static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 
 cWindow::cWindow(cRenderer& _renderer)
 {
-    auto registerWindowClass = []()
-    {
-        WNDCLASSEX wclass{};
-        wclass.cbSize = sizeof(WNDCLASSEX);
-        wclass.lpszClassName = L"DX3DWindow";
-        wclass.lpfnWndProc = &WindowProcedure;
-        return RegisterClassEx(&wclass);
-        
-    };
-    auto windowClassId = registerWindowClass();
+    SDL_Init(SDL_INIT_VIDEO);
+    
+    
+    _window = SDL_CreateWindow("OneTrick", 1280, 720, SDL_WINDOW_RESIZABLE);
+    auto help = SDL_GetWindowProperties(_window);
+    m_handle = SDL_GetPointerProperty(help, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+    SDL_SetWindowRelativeMouseMode(_window, true);
 
-    if (!windowClassId)
+    /*if (!windowClassId)
         throw std::runtime_error("RegisterClassEX failed.");
 
     RECT rect = {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
@@ -41,13 +38,13 @@ cWindow::cWindow(cRenderer& _renderer)
 
     m_handle = CreateWindowEx(NULL, MAKEINTATOM(windowClassId), L"OneTrick",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT,
-        rect.right - rect.left, rect.bottom - rect.top, NULL,NULL,NULL,NULL);
+        rect.right - rect.left, rect.bottom - rect.top, NULL,NULL,NULL,NULL);*/
     
 
     if (!m_handle)
-        throw std::runtime_error("CreateWindowEx failed.");
+        throw std::runtime_error("CreateWindow failed.");
 
-    ShowWindow(static_cast<HWND>(m_handle), SW_SHOW);
+    //ShowWindow(static_cast<HWND>(m_handle), SW_SHOW);
     _renderer.createSwapChain({m_handle});
 }
 

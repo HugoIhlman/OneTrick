@@ -52,7 +52,7 @@ void cModel::setPosition(OT::cVector3f _pos)
 
 void cModel::setRotation(OT::cVector3f _axis, float _rot)
 {
-    m_rotation.rotate(_axis, _rot);
+    m_rotation.rotate(_axis, _rot, true);
 }
 
 void cModel::setScale(OT::cVector3f _scale)

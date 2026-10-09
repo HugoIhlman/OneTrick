@@ -9,7 +9,11 @@ project "OneTrick"
     targetdir "bin/%{cfg.buildcfg}"
     includedirs{"src/Core", "src/Game", "src/Window", "src/Rendering"}
     files {"src/**.cpp", "src/**.h"}
-    links { "d3d11", "dxgi", "d3dcompiler" }
+    libdirs{"lib/SDL3/lib/x64"}
+        links{"SDL3"}
+        includedirs{"lib/SDL3/include"}
+        architecture "x64"
+    links { "d3d11", "dxgi", "d3dcompiler"}
     filter "configurations:Debug"
         defines {"DEBUG"}
         symbols "On" 

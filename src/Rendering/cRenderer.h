@@ -21,6 +21,7 @@ public:
     void render(cCamera* _camera, cLight* _light);
     OT::renderdsc getRsc(){return {m_dxgiFactory.Get(), m_d3dDevice.Get(), m_d3dDeviceContext.Get()};}
     void createSwapChain(const OT::swapchaindsc& desc);
+    void resize() {m_swap_chain->resize();}
 private:
     ComPtr<ID3D11Device> m_d3dDevice = {};
     ComPtr<ID3D11DeviceContext> m_d3dDeviceContext = {};

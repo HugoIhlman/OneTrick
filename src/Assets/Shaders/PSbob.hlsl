@@ -30,7 +30,7 @@ PS_OUTPUT main(const PS_INPUT _input)
     texColor = shaderTexture.Sample(SampleType, _input.uv);
 
     lightDir = -lightDirection;
-    intensity = saturate(dot(normalize(_input.normal), lightDir));
+    intensity = saturate(clamp(dot(normalize(_input.normal), lightDir), 0.2f, 1.0f));
     lightColor = saturate(diffuseColor * intensity);
 
     output.color = lightColor * texColor;

@@ -14,14 +14,17 @@ namespace OT
         constexpr cMatrix4x4(const cVector4<T>& _x, const cVector4<T>& _y, const cVector4<T>& _z, const cVector4<T>& _w): x(_x), y(_y), z(_z), w(_w) {}
         
         constexpr cMatrix4x4 operator+ (const cMatrix4x4& _m) const {return x + _m.x, y +_m.y, z+_m.z, w+_m.w;}
-        constexpr cMatrix4x4           operator* ( const cMatrix4x4& _m ) const { return { { ( _m.x * x.x ) + ( _m.y * x.y ) + ( _m.z * x.z ) + ( _m.w * x.w ) }, { ( _m.x * y.x ) + ( _m.y * y.y ) + ( _m.z * y.z ) + ( _m.w * y.w ) }, { ( _m.x * z.x ) + ( _m.y * z.y ) + ( _m.z * z.z ) + ( _m.w * z.w ) }, { ( _m.x * w.x ) + ( _m.y * w.y ) + ( _m.z * w.z ) + ( _m.w * w.w ) } }; }
+        constexpr cMatrix4x4 operator* ( const cMatrix4x4& _m ) const { return { { ( _m.x * x.x ) + ( _m.y * x.y ) + ( _m.z * x.z ) + ( _m.w * x.w ) }, { ( _m.x * y.x ) + ( _m.y * y.y ) + ( _m.z * y.z ) + ( _m.w * y.w ) }, { ( _m.x * z.x ) + ( _m.y * z.y ) + ( _m.z * z.z ) + ( _m.w * z.w ) }, { ( _m.x * w.x ) + ( _m.y * w.y ) + ( _m.z * w.z ) + ( _m.w * w.w ) } }; }
         
         cVector3<T>& left(void) {return *reinterpret_cast<cVector3<T>*>(&x);}
         const cVector3<T>& left(void) const {return *reinterpret_cast<const cVector3<T>*>(&x);}
+        
         cVector3<T>& up(void) {return *reinterpret_cast<cVector3<T>*>(&y);}
         const cVector3<T>& up(void) const {return *reinterpret_cast<const cVector3<T>*>(&y);}
+        
         cVector3<T>& at(void) {return *reinterpret_cast<cVector3<T>*>(&z);}
         const cVector3<T>& at(void) const {return *reinterpret_cast<const cVector3<T>*>(&z);}
+        
         cVector3<T>& pos(void) {return *reinterpret_cast<cVector3<T>*>(&w);}
         const cVector3<T>& pos(void) const {return *reinterpret_cast<const cVector3<T>*>(&w);}
 
@@ -31,11 +34,17 @@ namespace OT
         cVector4<T> w = {T(0), T(0), T(0), T(1)};
         
         inline cMatrix4x4& transpose();
+        
         inline cMatrix4x4& lookAt(const cVector3<T>& _pos, const cVector3<T> _target, const cVector3<T> _up);
-        inline cMatrix4x4& rotate(const cVector3<T>& axis, const T angle);
+        
+        inline cMatrix4x4& rotate(const cVector3<T>& axis, const T angle, const bool replace);
+        
         inline cMatrix4x4& perspective(const T _fov, const T _aspect, const T _near, const T _far);
+        
         inline cMatrix4x4& invert();
+        
         inline cMatrix4x4& translate(const cVector3<T>& _translation);
+        
         inline cMatrix4x4& scale(const cVector3<T>& _scale);
     
     };
@@ -43,10 +52,14 @@ namespace OT
     typedef cMatrix4x4<float> cMatrix4x4f;
     namespace Matrix4x4
     {
-        template <typename T> inline cMatrix4x4<T> rotate(const cVector3<T>& axis, const T angle) {return cMatrix4x4<T>().rotate(axis, angle);}       
-        template <typename T> inline cMatrix4x4<T> perspective(const T _fov, const T _aspect, const T _near, const T _far) {return cMatrix4x4<T>().perspective(_fov, _aspect, _near, _far);}       
+        template <typename T> inline cMatrix4x4<T> rotate(const cVector3<T>& axis, const T angle, const bool replace) {return cMatrix4x4<T>().rotate(axis, angle, replace);}  
+        
+        template <typename T> inline cMatrix4x4<T> perspective(const T _fov, const T _aspect, const T _near, const T _far) {return cMatrix4x4<T>().perspective(_fov, _aspect, _near, _far);}
+        
         template <typename T> inline cMatrix4x4<T> invert(const cMatrix4x4<T>& _m) {return cMatrix4x4<T>(_m).invert();}
+        
         template <typename T> inline cMatrix4x4<T> translate(const cVector3<T>& _translation) {return cMatrix4x4<T>().translate(_translation);}
+        
         template <typename T> inline cMatrix4x4<T> scale(const cVector3<T>& _scale) {return  cMatrix4x4<T>().scale(_scale);}
     }
     template <typename T>
@@ -111,7 +124,7 @@ namespace OT
     }
     
     template <typename T>
-    inline cMatrix4x4<T>& cMatrix4x4<T>::rotate(const cVector3<T>& axis, const T angle)
+    inline cMatrix4x4<T>& cMatrix4x4<T>::rotate(const cVector3<T>& axis, const T angle, const bool replace)
     {
         const T rad = MathExt::degToRad(angle);
         const T s = Math::sin(rad);
@@ -123,14 +136,28 @@ namespace OT
         const T sx = s * axis.x;
         const T sy = s * axis.y;
         const T sz = s * axis.z;
-        
-        *this = 
+        if (replace)
         {
-            {tx * axis.x + c, tx * axis.y - sz, tx * axis.z + sy, T(0)},
-            {ty * axis.x + sz, ty * axis.y + c, ty * axis.z - sx, T(0)},
-            {tz * axis.x - sy, tz * axis.y + sx, tz * axis.z + c, T(0)},
-            {T(0),T(0),T(0),T(1)}
-        };
+            *this = 
+            {
+                {tx * axis.x + c, tx * axis.y - sz, tx * axis.z + sy, T(0)},
+                {ty * axis.x + sz, ty * axis.y + c, ty * axis.z - sx, T(0)},
+                {tz * axis.x - sy, tz * axis.y + sx, tz * axis.z + c, T(0)},
+                {T(0),T(0),T(0),T(1)}
+            };
+        }
+        else
+        {
+            const cMatrix4x4<T> matrix = {
+                {tx * axis.x + c, tx * axis.y - sz, tx * axis.z + sy, T(0)},
+                {ty * axis.x + sz, ty * axis.y + c, ty * axis.z - sx, T(0)},
+                {tz * axis.x - sy, tz * axis.y + sx, tz * axis.z + c, T(0)},
+                {T(0),T(0),T(0),T(1)}
+            };
+            
+            *this = *this * matrix;
+        }
+        
         return *this;
     }
 
@@ -139,11 +166,15 @@ namespace OT
     {
         *this = 
         {
-            {x},
-            {y},
-            {z.x * -1, z.y * -1, z.z * -1, z.w * -1},
+            {x.x, y.x, z.x, T(0)},
+            {x.y, y.y, z.y, T(0)},
+            {x.z, y.z, z.z, T(0)},
             {w}
         };
+        float tx = -(w.x * x.x + w.y * y.x + w.z * z.x);
+        float ty = -(w.x * x.y + w.y * y.y + w.z * z.y);
+        float tz = -(w.x * x.z + w.y * y.z + w.z * z.z);
+        w = {tx,ty,tz, T(1)};
         return *this;
     }
 

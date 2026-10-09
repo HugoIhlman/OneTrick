@@ -22,43 +22,26 @@ cCamera::~cCamera()
 void cCamera::render()
 {
     OT::cVector3f up, position, at;
-    float yaw, pitch, roll;
-    OT::cMatrix4x4f rotationMatrix, translationMatrix, worldMatrix;
 
     up = {0.0f,1.0f,0.0f};
 
     position = {m_posX,m_posY,m_posZ};
 
     at = {0.0f,0.0f,1.0f};
-
     
- 
-    pitch = m_rotX;
-    yaw = m_rotY;
-    roll = m_rotZ;
+    world = rotation * translation;
 
-    rotationMatrix = rotationMatrix.rotate(OT::cVector3f(1.f,0.f,0.f), pitch);
-    rotationMatrix = rotationMatrix.rotate(OT::cVector3f(0.f,1.f,0.f), yaw);
-    rotationMatrix = rotationMatrix.rotate(OT::cVector3f(0.f,0.f,1.f), roll);
-    at = at.tranformVec(rotationMatrix);
-    up = up.tranformVec(rotationMatrix);
-    at = position + at;
-    
-    
-
-    viewMatrix = viewMatrix.lookAt(position, at, up);
+    viewMatrix = world;
+    viewMatrix.invert();
 }
 
-void cCamera::setPosition(float x, float y, float z)
+void cCamera::setPosition(OT::cVector3f _trans)
 {
-    m_posX = x;
-    m_posY = y;
-    m_posZ = z;
+    translation.translate(_trans);
 }
 
-void cCamera::setRotation(float x, float y, float z)
+void cCamera::setRotation(OT::cVector3f _rot)
 {
-    m_rotX = x;
-    m_rotY = y;
-    m_rotZ = z;
+    rotation.rotate(OT::cVector3f(1.0f,0.0f,0.0f), -_rot.y, true);
+    rotation.rotate(OT::cVector3f(0.0f,1.0f,0.0f), -_rot.x, false);
 }
