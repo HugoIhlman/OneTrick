@@ -1,8 +1,9 @@
+#pragma pack_matrix(row_major)
 cbuffer MatrixBuffer
 {
-    matrix worldMatrix;
-    matrix viewMatrix;
-    matrix projectionMatrix;
+    float4x4 worldMatrix;
+    float4x4 viewMatrix;
+    float4x4 projectionMatrix;
 }
 
 
@@ -22,7 +23,7 @@ struct VS_OUTPUT
 VS_OUTPUT main(const VS_INPUT _input)
 {
     VS_OUTPUT output;
-    output.position = mul(float4(_input.position, 1.0f), worldMatrix);
+    output.position = mul(float4(_input.position.xyz, 1.0f), worldMatrix );
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
 

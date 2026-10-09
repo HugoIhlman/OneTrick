@@ -9,8 +9,8 @@ public:
 
     void createShader();
     void createShape(ID3D11DeviceContext* _context);
-    bool setParams(ID3D11DeviceContext* _context, OT::cMatrix4x4f worldMatrix, OT::cMatrix4x4f viewMatrix,
-        OT::cMatrix4x4f projectionMatrix, ID3D11ShaderResourceView* texture, OT::cVector3f lightDirection, OT::cVector4f diffuseColor);
+    bool setParams(ID3D11DeviceContext* _context, const OT::cMatrix4x4f& worldMatrix, const OT::cMatrix4x4f& viewMatrix,
+        const OT::cMatrix4x4f& projectionMatrix, ID3D11ShaderResourceView* texture, OT::cVector3f lightDirection, OT::cVector4f diffuseColor);
     ID3D11SamplerState** getSamplerState(){return &m_samplerState;}
 private:
 

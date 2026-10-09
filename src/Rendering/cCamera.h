@@ -17,8 +17,8 @@ public:
     DirectX::XMFLOAT3 getPosition(){return DirectX::XMFLOAT3(m_posX,m_posY,m_posZ);}
     DirectX::XMFLOAT3 getRotation(){return DirectX::XMFLOAT3(m_rotX,m_rotY,m_rotZ);}
 
-private:
     OT::cMatrix4x4f viewMatrix;
+private:
 
     float m_posX, m_posY, m_posZ;
     float m_rotX, m_rotY, m_rotZ;

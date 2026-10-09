@@ -30,6 +30,7 @@ namespace OT
         inline cVector3& tranformVec(const cMatrix4x4<T>& _matrix);
         inline T length(void) const {return Math::sqrt(dot());}
         constexpr T dot (void) const {return (x * x) + (y * y) + (z * z);}
+        constexpr T dot (const cVector3& _vector) const {return (x * _vector.x) + (y * _vector.y) + (z * _vector.z);}
         inline cVector3& normalize(const T _length) {*this *= (_length > T(0)  ) ? (T(1) / _length): T(0);}
         inline cVector3& normalize(void) {normalize(length()); return *this;}
         inline cVector3& cross(const cVector3<T>& _vector) {*this = {(y * _vector.z) - (z * _vector.y), (z * _vector.x) - (x * _vector.z), (x * _vector.y) - (y * _vector.x)}; return *this;}

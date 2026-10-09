@@ -8,7 +8,7 @@
 #include "Core.h"
 
 
-cRenderer::cRenderer()
+cRenderer::cRenderer(std::vector<cModel*> _models)
 {
     D3D_FEATURE_LEVEL featureLevel = {};
     UINT creteDeviceFlags = {};
@@ -31,6 +31,17 @@ cRenderer::cRenderer()
 
     shader = new cShader(getRsc());
     shader->createShader();
+    for (auto model : _models)
+    {
+        bool result = model->initialize(getRsc().device,getRsc().context);
+        if (!result)
+        {
+            std::string msg = "Model failed to initialize: " + std::string(model->getName());
+            throw std::runtime_error(msg);
+        }
+    }
+    
+    m_models = _models;
 }
 
 cRenderer::~cRenderer()
@@ -38,33 +49,31 @@ cRenderer::~cRenderer()
     m_swap_chain = nullptr;
 }
 
-void cRenderer::render(cModel* _model, cCamera* _camera, cLight* _light)
+void cRenderer::render(cCamera* _camera, cLight* _light)
 {
-    OT::cMatrix4x4f view, world, proj;
+    OT::cMatrix4x4f view, proj;
 
-    rotation -= 0.016f *0.2f;
-    if (rotation < 0.0f)
-        rotation += 360.0f;
+   
     m_d3dDeviceContext->ClearRenderTargetView(m_swap_chain->backBuffer, color.ToVector().data());
     m_d3dDeviceContext->ClearDepthStencilView(m_swap_chain->m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f,0xFF);
     
     _camera->render();
-
-    m_swap_chain->getWorldMatrix(world);
     m_swap_chain->getProjectionMatrix(proj);
-    _camera->getViewMatrix(view);
+    view = _camera->viewMatrix;
 
-    world.rotate(OT::cVector3f(0.f,1.f,0.f), rotation);
+    for (auto model : m_models)
+    {
+        
+        model->render(m_d3dDeviceContext.Get());
+        
+        shader->setParams(m_d3dDeviceContext.Get(), model->m_world, view, proj, model->GetTexture(), _light->getDirection(), _light->getDiffuseColor());
 
-    _model->render(m_d3dDeviceContext.Get());
+        m_d3dDeviceContext->PSSetSamplers(0,1,shader->getSamplerState());
 
-    shader->setParams(m_d3dDeviceContext.Get(), world, view, proj, _model->GetTexture(), _light->getDirection(), _light->getDiffuseColor());
+        int id = model->getIndexCount();
 
-    m_d3dDeviceContext->PSSetSamplers(0,1,shader->getSamplerState());
-
-    int id = _model->getIndexCount();
-
-    m_d3dDeviceContext->DrawIndexed(id, 0,0);
+        m_d3dDeviceContext->DrawIndexed(id, 0,0);
+    }
     m_swap_chain->getSwapChain()->Present(1,0);
 }
 

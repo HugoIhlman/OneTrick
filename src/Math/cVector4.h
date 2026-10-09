@@ -18,6 +18,9 @@ namespace OT
         constexpr explicit cVector4(const cVector3<T>& _v, const T _w);
 
         constexpr cVector4 operator+ (const cVector4 _v) const {return {x + _v.x, y + _v.y, z + _v.z, w + _v.w};}
+        constexpr cVector4  operator* ( const cVector4& _v ) const { return { x * _v.x, y * _v.y, z * _v.z, w * _v.w }; }
+        template < typename T2 >
+        constexpr cVector4  operator* ( const T2 _t ) const        { return { static_cast< T >( x * _t ), static_cast< T >( y * _t ), static_cast< T >( z * _t ), static_cast< T >( w * _t ) }; }
 
         inline cVector4& tranformVec(const cMatrix4x4<T>& _matrix);
 

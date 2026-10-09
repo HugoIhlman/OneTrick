@@ -94,7 +94,7 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     D3D11_RASTERIZER_DESC rasterDesc;
     SecureZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
     rasterDesc.AntialiasedLineEnable = false;
-    rasterDesc.CullMode = D3D11_CULL_BACK;
+    rasterDesc.CullMode = D3D11_CULL_NONE;
     rasterDesc.DepthBias = 0;
     rasterDesc.DepthBiasClamp = 0.0f;
     rasterDesc.DepthClipEnable = true;
@@ -121,10 +121,10 @@ cSwapChain::cSwapChain(OT::swapchaindsc swp, OT::renderdsc rnd): factory(rnd.fac
     context->RSSetViewports(1, &viewport);
     float fov = 90.0f;
     float aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
-    float _near = 0.1f;
+    float _near = 0.01f;
     float _far = 1000.0f;    
     
-    projectionMatrix = OT::Matrix4x4::perspective(fov,aspect, _near, _far);
+    projectionMatrix.perspective(fov,aspect, _near, _far);
 }
 
 cSwapChain::~cSwapChain()

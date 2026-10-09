@@ -14,11 +14,11 @@ using Microsoft::WRL::ComPtr;
 class cRenderer
 {
 public:
-    cRenderer();
+    cRenderer(std::vector<cModel*> _models);
     ~cRenderer();
     
 
-    void render(cModel* _model, cCamera* _camera, cLight* _light);
+    void render(cCamera* _camera, cLight* _light);
     OT::renderdsc getRsc(){return {m_dxgiFactory.Get(), m_d3dDevice.Get(), m_d3dDeviceContext.Get()};}
     void createSwapChain(const OT::swapchaindsc& desc);
 private:
@@ -32,6 +32,8 @@ private:
     
     const OT::cVector4f color = {0.2f,0.2f,0.3f,1.0f};
     std::shared_ptr<cSwapChain> m_swap_chain = {};
+    
+    std::vector<cModel*> m_models;
 
     float rotation = 0.0f;
 

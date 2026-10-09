@@ -19,6 +19,7 @@ private:
     std::unique_ptr<cRenderer> m_renderer = {};
     std::unique_ptr<cWindow> m_display = {};
     cModel* m_model;
+    cModel* m_cube;
     cCamera* m_camera;
     cLight* m_light;
     bool m_isRunning = true;

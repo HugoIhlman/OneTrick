@@ -3,8 +3,11 @@
 #include <fstream>
 #include <iterator>
 
-cModel::cModel()
+cModel::cModel(const char* _texture, const char* _model) 
 {
+    //i am the one who is unsafe
+    m_texturePath = const_cast<char*>(_texture);
+    m_modelPath = const_cast<char*>(_model);
 }
 
 cModel::~cModel()
@@ -15,9 +18,9 @@ cModel::~cModel()
     m_model = nullptr;
 }
 
-bool cModel::initialize(ID3D11Device* _device, ID3D11DeviceContext* _context, char* _textureFileName, char* _model)
+bool cModel::initialize(ID3D11Device* _device, ID3D11DeviceContext* _context)
 {
-    bool mresult = loadModel(_model);
+    bool mresult = loadModel(m_modelPath);
     if (!mresult)
     {
         return false;
@@ -27,7 +30,7 @@ bool cModel::initialize(ID3D11Device* _device, ID3D11DeviceContext* _context, ch
     {
         return false;
     }
-    bool tresult = loadTexture(_device, _context, _textureFileName);
+    bool tresult = loadTexture(_device, _context, m_texturePath);
     if (!tresult)
     {
         return false;
@@ -37,7 +40,24 @@ bool cModel::initialize(ID3D11Device* _device, ID3D11DeviceContext* _context, ch
 
 void cModel::render(ID3D11DeviceContext* _context)
 {
+    m_scaleRotate = m_scale * m_rotation;
+    m_world = m_scaleRotate * m_translation;
     renderBuffers(_context);
+}
+
+void cModel::setPosition(OT::cVector3f _pos)
+{
+    m_translation.translate(_pos); 
+}
+
+void cModel::setRotation(OT::cVector3f _axis, float _rot)
+{
+    m_rotation.rotate(_axis, _rot);
+}
+
+void cModel::setScale(OT::cVector3f _scale)
+{
+    m_scale.scale(_scale);
 }
 
 bool cModel::initializeBuffers(ID3D11Device* _device)
